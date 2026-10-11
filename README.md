@@ -3,11 +3,11 @@
 Reproducible **final tables** for the exact KB, IMPA and local-search Exact
 cycle counters, and for the interleaved Hybrid girth-cycle estimator.
 
-**[Final full tables](FINAL_TABLE.md)** · **[13 girth-only rows CSV](FINAL_TABLE.csv)** · **[4 multi-length rows CSV](FINAL_MULTILENGTH.csv)**
+**[Final full tables](FINAL_TABLE.md)** · **[17 girth-only rows CSV](FINAL_TABLE.csv)** · **[4 multi-length rows CSV](FINAL_MULTILENGTH.csv)**
 
 ## Scope
 
-* 13 Tanner graphs for `T=g`: four-way KB / IMPA / Exact / Hybrid comparison.
+* 17 Tanner graphs for `T=g`: four-way KB / IMPA / Exact / Hybrid comparison.
 * Four `(3,4)` regular affine-incidence random lifts for `g=6`, `T=8` or `T=10`: three-way KB / IMPA / Exact comparison.
 * All deterministic outputs independently cross-checked against the known
   cycle counts; multi-length results also checked using canonical simple-cycle DFS.
@@ -22,7 +22,7 @@ cycle counters, and for the interleaved Hybrid girth-cycle estimator.
 * `multilength.cpp` — the local BFS/residual-search Exact method, KB and IMPA
   for `g <= T < 2g`, with independent canonical DFS verification.
 * `generate_graphs.py` — deterministic generation of nine primary graph inputs.
-* `run_remaining.py` — the complete one-CPU 13+4 benchmark runner.
+* `run_remaining.py` — the complete one-CPU 17+4 benchmark runner.
 * `.github/workflows/final-benchmarks.yml` — fully automated reproduction and
   publication of the checked final tables.
 
