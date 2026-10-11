@@ -60,4 +60,38 @@ for x in extra:
  texrows.append(f"{x['graph']} & $({x['dv']},{x['dc']})$ & 6 & {x['n']} & 8 & $({counts})$ & "+" & ".join(fm)+r" & & \\")
 tex=tex.replace("\\hline\n\\end{tabular}","\n".join(texrows)+"\n\\hline\n\\end{tabular}")
 file.write_text(tex)
+
+# Reconstruct BOTH TeX sections from the current-run CSVs to avoid stale times.
+with (P/"FINAL_TABLE.csv").open(newline="") as stream:
+ girthrows=list(csv.DictReader(stream))
+with (P/"FINAL_MULTILENGTH.csv").open(newline="") as stream:
+ multirows=list(csv.DictReader(stream))
+def highlighted(row, keys):
+ vals=[float(row[k]) for k in keys]
+ minimum=min(vals)
+ return [r"\textbf{"+f"{v:.2f}"+"}" if v==minimum else f"{v:.2f}" for v in vals]
+g_tex=[]
+for x in girthrows:
+ columns=highlighted(x,("KB_ms","IMPA_ms","Exact_ms","Hybrid_ms"))
+ mare=float(x["MARE_percent"])
+ mstr="0" if mare==0 else f"{mare:.2f}"
+ g_tex.append(f"{x['graph']} & $({x['dv']},{x['dc']})$ & {x['g']} & {x['n']} & & {x['Ng']} & "+
+              " & ".join(columns)+f" & {mstr} "+r"\\")
+m_tex=[]
+for x in multirows:
+ columns=highlighted(x,("KB_ms","IMPA_ms","Exact_ms"))
+ m_tex.append(f"{x['graph']} & $({x['dv']},{x['dc']})$ & {x['g']} & {x['n']} & {x['T']} & "+
+              f"$({x['counts'].replace(';',',')})$ & "+" & ".join(columns)+r" & & \\")
+tex=file.read_text()
+first=tex.index(r"\noalign{\vskip 2pt}")
+start=tex.index("\n",first)+1
+end=tex.index("\n\\hline\n\\multicolumn{4}",start)
+tex=tex[:start]+"\n".join(g_tex)+tex[end:]
+second=tex.index(r"\multicolumn{4}{l}{\emph{Multiple cycle lengths}}")
+anchor=tex.index(r"\noalign{\vskip 2pt}",second)
+start=tex.index("\n",anchor)+1
+end=tex.index("\n\\hline\n\\end{tabular}",start)
+tex=tex[:start]+"\n".join(m_tex)+tex[end:]
+file.write_text(tex)
+
 print("FINISHED: 17 girth rows and 8 multiple-length rows",flush=True)
