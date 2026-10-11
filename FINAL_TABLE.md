@@ -1,27 +1,25 @@
-# Final table — completed single-core girth-only measurements
-
-Only the **nine actually completed and independently checked** (T=g) instances appear here. Four additional requested cases (R1200, R2400, P1200, P1600) and the separate four-instance (T>g) comparison are not included because fresh four-way benchmark runs have not been completed for them.
+# Final table: four-algorithm girth-cycle timing comparison
 
 | Graph | KB (ms) | IMPA (ms) | Exact (ms) | Hybrid (ms) | MARE (%) |
 |---|---:|---:|---:|---:|---:|
-| A16c | 1.421 | 0.261 | **0.102** | 0.620 | 8.63 |
-| A128c | 14.491 | 2.652 | 1.067 | **0.929** | 8.63 |
-| A128r | 54.927 | 2.405 | **1.203** | 15.786 | 0 |
-| B128c | 2.887 | 0.633 | **0.268** | 0.332 | 8.33 |
-| C128c | 102.302 | 16.183 | 7.108 | **2.497** | 7.70 |
-| C128r | 846.475 | 13.067 | **7.563** | 114.638 | 0 |
-| D16c | 66.150 | 7.545 | 3.999 | **3.545** | 7.58 |
-| Q410 | 1003.179 | 43.555 | **30.752** | 65.783 | 7.14 |
-| Q412 | 2737.884 | 93.609 | 79.275 | **48.986** | 10.13 |
+| A16c | 1.341 | 0.258 | **0.105** | 0.621 | 8.63 |
+| A128c | 14.801 | 2.522 | **0.963** | 0.969 | 8.63 |
+| A128r | 54.901 | 2.528 | **1.180** | 16.037 | 0.00 |
+| B128c | 2.832 | 0.646 | **0.272** | 0.345 | 8.33 |
+| C128c | 96.211 | 15.171 | 6.823 | **2.235** | 7.70 |
+| C128r | 854.593 | 13.472 | **6.839** | 117.555 | 0.00 |
+| D16c | 64.921 | 7.269 | 4.238 | **3.470** | 7.58 |
+| Q410 | 1010.770 | 46.854 | **30.534** | 72.256 | 7.14 |
+| Q412 | 2842.791 | 92.786 | 84.886 | **45.719** | 10.13 |
 
-## Reproduction protocol
+## Measurement protocol
 
-* AMD EPYC 9V74; Linux; single CPU pinned with `taskset -c 0`; C++17 compiled using `g++ -std=c++17 -O3 -DNDEBUG`.
-* Identical input adjacency lists for all four implementations; graph loading and construction excluded from timed sections.
-* KB, IMPA and Exact: median of 7 independent executions. Hybrid: mean wall-clock of 100 executions for the first seven rows, 30 executions for Q410 and Q412; MARE is the mean absolute relative error over the same runs.
-* Inverse-sampling target (r=100), alternating work budgets of 8192 adjacency probes; the exact branch is resumable between completed roots. Once either branch completes, **neither branch is called again**. Exact alone and Hybrid's exact branch share the same optimized `ExactState::runRoot()` counting kernel.
-* Deterministic outputs from KB, IMPA, standalone Exact, and the full resumable Exact were checked for exact equality with the supplied reference (N_g) on all listed inputs.
-* Work-budget policy is part of the method and affects timings; a different allocation between the branches changes results. The hybrid is not claimed to be universally faster than Exact.
-* Source: `four_algorithms.cpp`. Machine-readable values: `FINAL_TABLE.csv`.
+All four algorithms were executed as single-threaded C++17 code, compiled with `g++ -std=c++17 -O3 -DNDEBUG`, and pinned to one CPU (`taskset -c 0`) on the same AMD EPYC 9V74 environment. Input graph construction and disk loading are not timed.
 
-**Scope:** This file is the finalized record of the nine completed (T=g) experiments, **not** a claim that the originally requested complete 13+4 comparison has been finished.
+KB, IMPA and Exact report medians of seven independent executions. Hybrid reports mean elapsed time and mean absolute relative error from 100 runs, except Q410/Q412 (30 runs). The inverse-sampling target is (r=100), and the scheduler alternates 8192 adjacency-probe credits per branch, with root-granularity preemption for the exact part. There are no further `advance()` calls after either branch finishes.
+
+The standalone Exact and Hybrid's exact branch use exactly the same `ExactState::runRoot()` kernel. IMPA chooses direct label-pair accumulation at small meetings and a mathematically equivalent cumulative distinct-label sum when the meeting contains more than five incoming edges. KB retains sparse/nonzero-message processing, per-node sums, reverse-edge subtraction and suppression of earlier roots: no unverified rewrite was made merely to reduce its displayed time.
+
+All deterministic counts (KB, IMPA, Exact, full resumable Exact) were checked to equal the supplied (N_g) values for the nine included instances. Source: `four_algorithms.cpp`. Regeneration: `python3 run_benchmarks.py`. Machine-readable data: `FINAL_TABLE.csv`.
+
+**Coverage:** These nine (T=g) rows are the fully completed and remeasured subset. The R1200/R2400/P1200/P1600 rows and the requested separate four-instance (T>g) table have not yet received the required reproducible four-algorithm timing runs and are therefore omitted.
