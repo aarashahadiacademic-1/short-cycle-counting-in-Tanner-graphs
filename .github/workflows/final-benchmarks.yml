@@ -1,4 +1,4 @@
-name: Final benchmarks (17+4)
+name: Final benchmarks (17+8)
 on:
   workflow_dispatch:
   push:
