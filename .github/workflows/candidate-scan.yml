@@ -1,0 +1,15 @@
+name: Candidate scan
+on:
+  push:
+    paths:
+      - '.github/workflows/candidate-scan.yml'
+permissions:
+  contents: read
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Search candidate parameters using existing exact KB IMPA algorithms
+        run: python3 candidate_scan.py
