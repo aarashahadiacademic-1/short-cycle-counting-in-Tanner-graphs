@@ -1,32 +1,43 @@
 # Short-cycle counting in Tanner graphs
 
-This repository contains a **single-core, four-algorithm timing comparison**
-for the nine fully measured Tanner graph instances with `T = g`.
+Reproducible **final tables** for the exact KB, IMPA and local-search Exact
+cycle counters, and for the interleaved Hybrid girth-cycle estimator.
 
-**[Final timing table](FINAL_TABLE.md)** | **[CSV data](FINAL_TABLE.csv)**
+**[Final full tables](FINAL_TABLE.md)** · **[13 girth-only rows CSV](FINAL_TABLE.csv)** · **[4 multi-length rows CSV](FINAL_MULTILENGTH.csv)**
+
+## Scope
+
+* 13 Tanner graphs for `T=g`: four-way KB / IMPA / Exact / Hybrid comparison.
+* Four `(3,4)` regular affine-incidence random lifts for `g=6`, `T=8` or `T=10`: three-way KB / IMPA / Exact comparison.
+* All deterministic outputs independently cross-checked against the known
+  cycle counts; multi-length results also checked using canonical simple-cycle DFS.
+* C++17, `-O3`, single-threaded and pinned to the same CPU throughout
+  each full experiment. Seven-run medians for deterministic counters; the
+  Hybrid means and MARE use 100 runs, except 30 runs for Q410 and Q412.
 
 ## Files
 
-- `four_algorithms.cpp` — KB, IMPA, Exact and interleaved Hybrid counting.
-  The standalone exact counter and Hybrid exact branch use the *same*
-  `ExactState::runRoot()` kernel; the Hybrid yields only between complete roots.
-  No `step()`/advance call is made after either branch completes.
-- `generate_graphs.py` — deterministic construction of all nine evaluated graphs.
-- `run_benchmarks.py` — compilation, graph generation, pinned one-core timing,
-  count checks and machine-readable CSV output.
-- `FINAL_TABLE.md` and `FINAL_TABLE.csv` — measured results and protocol.
+* `four_algorithms.cpp` — KB, IMPA, Exact and Hybrid for `T=g`.
+  Exact standalone and the Hybrid exact branch share one optimized root kernel.
+* `multilength.cpp` — the local BFS/residual-search Exact method, KB and IMPA
+  for `g <= T < 2g`, with independent canonical DFS verification.
+* `generate_graphs.py` — deterministic generation of nine primary graph inputs.
+* `run_remaining.py` — the complete one-CPU 13+4 benchmark runner.
+* `.github/workflows/final-benchmarks.yml` — fully automated reproduction and
+  publication of the checked final tables.
 
 ## Reproduce
 
-Requires Linux, Python 3, g++ with C++17 and `taskset`.
+Open **Actions → Final benchmarks → Run workflow**.
+The workflow downloads only the four original R/P **input edge lists**
+from the public <https://github.com/aarashahadiacademic-1/tanner-cycle-counting>
+graph corpus at runtime; historical source implementations or timing
+measurements are not copied into this repository.
 
-```sh
-python3 run_benchmarks.py
-```
+For local execution, check out that public graph corpus and run
+`REFERENCE_GRAPH_DIR=/path/to/old-repo/graphs python3 run_remaining.py`
+on Linux with Python 3, g++ and CPU affinity support.
 
-Compilation: `g++ -std=c++17 -O3 -DNDEBUG`; fixed CPU affinity:
-`taskset -c 0`. Note that timings vary with the host CPU and system load.
-
-**Scope:** Nine completed girth-only cases. Four R/P graphs and the
-separate multi-length (`T>g`) comparison are not reported until fully
-measured. Nothing has been filled in from prior timing tables.
+Timing values depend on the host processor. The CPU model, compiler settings,
+input checksums, sample counts and the exact measured outputs are recorded
+in the final tables and CSVs.
