@@ -19,9 +19,9 @@ struct G{
 };
 struct ExactState{
  const G&gr;int g,k,root=0,epoch=0;ull occurrences=0,probes=0;
- vector<int>dist,mark,cnt,nodes,cur,nxt;
+ vector<int>dist,mark,cnt,nodes,cur,nxt,meet;
  explicit ExactState(const G&gg,int girth):gr(gg),g(girth),k(girth/2),
-  dist(gg.N,-1),mark(gg.N),cnt(gg.N){}
+  dist(gg.N,-1),mark(gg.N),cnt(gg.N){nodes.reserve(gg.N);cur.reserve(gg.N);nxt.reserve(gg.N);meet.reserve(gg.N);}
  void runRoot(){
   int s=root++;++epoch;nodes.clear();cur.clear();cur.push_back(s);
   nodes.push_back(s);dist[s]=0;
@@ -30,12 +30,15 @@ struct ExactState{
     ++probes;if(dist[v]<0){dist[v]=level+1;nodes.push_back(v);nxt.push_back(v);}
    }cur.swap(nxt);
   }
+  meet.clear();
   for(int u:cur)for(int v:gr.a[u]){
-   ++probes;if(dist[v]<0){if(mark[v]!=epoch){mark[v]=epoch;cnt[v]=0;}++cnt[v];}
+   ++probes;
+   if(dist[v]<0){
+    if(mark[v]!=epoch){mark[v]=epoch;cnt[v]=0;meet.push_back(v);}
+    ++cnt[v];
+   }
   }
-  for(int u:cur)for(int v:gr.a[u]){
-   ++probes;if(mark[v]==epoch){occurrences+=ull(cnt[v])*(cnt[v]-1)/2;mark[v]=0;}
-  }
+  for(int v:meet)occurrences+=ull(cnt[v])*(cnt[v]-1)/2;
   for(int u:nodes)dist[u]=-1;
  }
  void advance(ull budget){
