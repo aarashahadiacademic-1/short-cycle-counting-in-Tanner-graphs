@@ -23,3 +23,32 @@ The exact counts of KB, IMPA, standalone Exact and complete resumable Exact agre
 **Reproduce:** Run `python3 run_benchmarks.py`. Sources: `four_algorithms.cpp` and `generate_graphs.py`. Numerical data: `FINAL_TABLE.csv`.
 
 **Scope:** These are the nine fully measured girth-only cases. Four R/P examples and the separate `T>g` four-instance comparison have not been measured under this final protocol and are not represented here.
+
+
+## Multiple lengths: completed (3,4)-regular benchmarks
+
+These four independently generated random lifts of the affine-incidence B base
+were run on the same pinned CPU. All reported cycle counts agree across
+local-search Exact, KB, IMPA and independent canonical simple-cycle DFS.
+Hybrid here is intentionally omitted: the hybrid estimator targets girth cycles,
+not simultaneous multi-length cycle counts.
+
+| Graph | n | g | T | (N6,N8[,N10]) | KB (ms) | IMPA (ms) | Exact (ms) |
+|---|---:|---:|---:|---|---:|---:|---:|
+| B16r | 320 | 6 | 8 | (34,236) | 3.344 | **0.187** | 0.795 |
+| B32r | 640 | 6 | 8 | (45,237) | 6.639 | **0.369** | 1.824 |
+| B64r | 1280 | 6 | 10 | (45,208,718) | 49.866 | **2.721** | 18.323 |
+| B128r | 2560 | 6 | 10 | (42,215,742) | 155.624 | **3.852** | 40.187 |
+
+These are synthetic lifts of a well-known affine-incidence construction,
+not four individually famous standardized LDPC codes. Times are medians of
+seven C++17 -O3 executions with CPU affinity fixed; graph construction and
+loading excluded. The exact counter uses the BFS-arm / residual-DFS method,
+not the canonical DFS used solely to validate its answer.
+Source: `multilength.cpp`. Data: `FINAL_MULTILENGTH.csv`.
+
+**Complete 13-row remeasurement:** the automated `run_remaining.py` script
+reads the original R/P graph *inputs* from the external public graph repository
+without importing its old implementations or timing results. This script has
+not yet produced a verified full 13-row file. Therefore no R/P timings are
+listed as completed here.
