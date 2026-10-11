@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - '.github/workflows/final-benchmarks.yml'
+concurrency:
+  group: final-benchmarks
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:
@@ -22,6 +25,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --ff-only origin main
           git add FINAL_TABLE.csv FINAL_MULTILENGTH.csv FINAL_TABLE.md
           git diff --cached --quiet && exit 0
           git commit -m "Final checked 13+4 timing tables [skip ci]"
