@@ -72,4 +72,23 @@ for name,L,g,z,s,r,j in [("Q410",4,10,79,128,2,0),("Q412",4,12,142,64,0,3)]:
     ex[r][j]+=z
     save(name,L*Z,3*Z,[(col*Z+i,row*Z+(i+ex[row][col])%Z)
                         for col in range(L) for i in range(Z) for row in range(3)])
-print("Regenerated nine benchmark graphs.")
+# Additional cycle-rich lift benchmarks, generated using exactly the
+# same incidence bases, seed convention and cyclic lift definition.
+for base, q, dv, dc, sizes in [
+    ("A", 7, 3, 6, [256]),
+    ("C", 11, 4, 8, [256, 512]),
+]:
+    bn, bm = dc*q, dv*q
+    be = [(x*q+y, a*q+(y-a*x)%q)
+          for x in range(dc) for y in range(q) for a in range(dv)]
+    for size in sizes:
+        nn, mm, lifted = lift(bn, bm, be, size, "cyclic",
+                              20261008+size+q*100)
+        save(f"{base}{size}c", nn, mm, lifted)
+
+# The same split symplectic W(5) incidence base as D16c above
+nn, mm, lifted = lift(n, m, edges, 32, "cyclic", 20261008+32+500)
+save("D32c", nn, mm, lifted)
+
+print("Regenerated original nine and four cycle-rich benchmark graphs.")
+
