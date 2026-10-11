@@ -21,12 +21,13 @@ jobs:
       - name: Execute all benchmarks with CPU affinity and check every count
         run: |
           python3 run_remaining.py
+          python3 append_multi.py
       - name: Commit checked final table only
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --ff-only origin main
-          git add FINAL_TABLE.csv FINAL_MULTILENGTH.csv FINAL_TABLE.md
+          git add FINAL_TABLE.csv FINAL_MULTILENGTH.csv FINAL_TABLE.md FINAL_TABLE.tex
           git diff --cached --quiet && exit 0
-          git commit -m "Final checked 17+4 timing tables [skip ci]"
+          git commit -m "Final checked 17+8 timing tables [skip ci]"
           git push
