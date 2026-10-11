@@ -1,0 +1,28 @@
+name: Final benchmarks
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/final-benchmarks.yml'
+permissions:
+  contents: write
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve reference graph input data (not old code)
+        run: |
+          git clone --quiet --depth=1 https://github.com/aarashahadiacademic-1/tanner-cycle-counting.git /tmp/reference-tanner-graphs
+      - name: Execute all benchmarks with CPU affinity and check every count
+        run: |
+          python3 run_remaining.py
+      - name: Commit checked final table only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add FINAL_TABLE.csv FINAL_MULTILENGTH.csv FINAL_TABLE.md
+          git diff --cached --quiet && exit 0
+          git commit -m "Final checked 13+4 timing tables [skip ci]"
+          git push
