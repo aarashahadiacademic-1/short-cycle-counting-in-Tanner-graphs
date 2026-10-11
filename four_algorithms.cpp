@@ -88,7 +88,7 @@ ull impa(const G&gr,int g){
  int D=gr.a[0].size(),E=gr.from.size();
  vector<ull>cur((size_t)E*D),nxt((size_t)E*D);
  vector<int>active,an,meetnodes;vector<vector<int>>incoming(gr.N);
- vector<char>tagged(E),mtag(gr.N);ull result=0;
+ vector<char>tagged(E),mtag(gr.N);vector<ull> byLabel(D);ull result=0;
  for(int root=0;root<gr.n;root++){
   active.clear();for(int j=0;j<D;j++){
    int e=gr.out[root][j];cur[(size_t)e*D+j]=1;active.push_back(e);
@@ -109,11 +109,31 @@ ull impa(const G&gr,int g){
      incoming[u].push_back(e);
     }
     for(int u:meetnodes){
-     auto&es=incoming[u];
-     for(int i=0;i<(int)es.size();i++)
-      for(int h=i+1;h<(int)es.size();h++)
-       for(int a=0;a<D;a++)for(int b=0;b<D;b++)if(a!=b)
-        result+=nxt[(size_t)es[i]*D+a]*nxt[(size_t)es[h]*D+b];
+     auto &es=incoming[u];
+     // Small meeting sets: retain the low-overhead direct formula.
+     if(es.size()<=5){
+      for(int i=0;i<(int)es.size();i++)
+       for(int h=i+1;h<(int)es.size();h++)
+        for(int a=0;a<D;a++)for(int b=0;b<D;b++)if(a!=b)
+         result+=nxt[(size_t)es[i]*D+a]*nxt[(size_t)es[h]*D+b];
+     }else{
+      // Larger sets: sum distinct-root-label path pairs incrementally.
+      // Each unordered pair of incoming edges is counted exactly once.
+      ull all=0;
+      fill(byLabel.begin(),byLabel.end(),0);
+      for(int e:es){
+       size_t base=(size_t)e*D;
+       for(int a=0;a<D;a++){
+        ull x=nxt[base+a];
+        result+=x*(all-byLabel[a]);
+       }
+       for(int a=0;a<D;a++){
+        ull x=nxt[base+a];
+        byLabel[a]+=x;
+        all+=x;
+       }
+      }
+     }
      es.clear();mtag[u]=0;
     }
    }
