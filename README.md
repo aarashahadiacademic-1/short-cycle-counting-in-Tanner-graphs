@@ -3,7 +3,7 @@
 Reproducible **final tables** for the exact KB, IMPA and local-search Exact
 cycle counters, and for the interleaved Hybrid girth-cycle estimator.
 
-**[Final full tables](FINAL_TABLE.md)** · **[17 girth-only rows CSV](FINAL_TABLE.csv)** · **[4 multi-length rows CSV](FINAL_MULTILENGTH.csv)**
+**[Final full tables](FINAL_TABLE.md)** · **[Article LaTeX table](FINAL_TABLE.tex)** · **[17 girth-only rows CSV](FINAL_TABLE.csv)** · **[4 multi-length rows CSV](FINAL_MULTILENGTH.csv)**
 
 ## Scope
 
