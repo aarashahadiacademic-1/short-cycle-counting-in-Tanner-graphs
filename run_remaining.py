@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Full validated 13 + 4 comparison; never copies old algorithm implementations."""
+"""Full validated 17 + 4 comparison; never copies old algorithm implementations."""
 import csv
 import hashlib
 import json
@@ -13,10 +13,10 @@ import sys
 P = Path(__file__).resolve().parent
 SRC = Path(os.environ.get("REFERENCE_GRAPH_DIR", "/tmp/reference-tanner-graphs/graphs"))
 cases = [
- ("A16c",6,2560),("A128c",6,20480),("A128r",6,176),
- ("B128c",6,4608),("C128c",6,204928),("C128r",6,1590),
+ ("A16c",6,2560),("A128c",6,20480),("A256c",6,40960),("A128r",6,176),
+ ("B128c",6,4608),("C128c",6,204928),("C256c",6,409856),("C512c",6,819712),("C128r",6,1590),
  ("R1200",6,1564),("R2400",6,155),
- ("D16c",8,57680),("P1200",8,65),
+ ("D16c",8,57680),("D32c",8,115360),("P1200",8,65),
  ("P1600",10,11),("Q410",10,40448),("Q412",12,308992)
 ]
 multi = [("B16r",16,8),("B32r",32,8),("B64r",64,10),("B128r",128,10)]
@@ -120,4 +120,4 @@ lines+=["","## Reproducibility","",
  "* Reproduce by running the GitHub Actions workflow 'Final benchmarks', or with REFERENCE_GRAPH_DIR pointed at a checkout of that graph corpus and python3 run_remaining.py.",
  ""]
 (P/"FINAL_TABLE.md").write_text("\n".join(lines))
-print("COMPLETE: 13 girth-only + 4 multiple-length cases",flush=True)
+print("COMPLETE: 17 girth-only + 4 multiple-length cases",flush=True)
