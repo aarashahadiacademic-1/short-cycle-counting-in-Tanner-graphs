@@ -1,4 +1,4 @@
-name: Final benchmarks (Exact winners)
+name: Final benchmarks (fixed Exact cohort)
 on:
   workflow_dispatch:
   push:
