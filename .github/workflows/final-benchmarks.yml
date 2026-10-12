@@ -1,4 +1,4 @@
-name: Final benchmarks (cycle-rich low-degree)
+name: Final benchmarks (Exact winners)
 on:
   workflow_dispatch:
   push:
@@ -21,7 +21,7 @@ jobs:
       - name: Execute all benchmarks with CPU affinity and check every count
         run: |
           python3 run_remaining.py
-          python3 rich_multilength.py
+          python3 exact_winners_multilength.py
       - name: Commit checked final table only
         run: |
           git config user.name "github-actions[bot]"
@@ -29,5 +29,5 @@ jobs:
           git pull --ff-only origin main
           git add FINAL_TABLE.csv FINAL_MULTILENGTH.csv FINAL_TABLE.md FINAL_TABLE.tex
           git diff --cached --quiet && exit 0
-          git commit -m "Final checked 17+5 rich-cycle tables [skip ci]"
+          git commit -m "Final checked Exact-winner multilength tables [skip ci]"
           git push
