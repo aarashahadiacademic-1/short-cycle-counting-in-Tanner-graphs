@@ -1,4 +1,4 @@
-name: Final benchmarks (fixed Exact cohort)
+name: Final benchmarks (optimized KB, fixed cohort)
 on:
   workflow_dispatch:
   push:
