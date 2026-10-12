@@ -1,22 +1,29 @@
-# Short-cycle counting in Tanner graphs
+# Cycle counting in Tanner graphs
 
-Final, reproducible timings comparing KB, IMPA, Exact and Hybrid on Tanner graphs.
+Reproducible exact and hybrid cycle-counting benchmarks for LDPC Tanner graphs.
 
-[Final table (LaTeX)](FINAL_TABLE.tex) · [Final table (Markdown)](FINAL_TABLE.md) · [Girth-only CSV](FINAL_TABLE.csv) · [Near-girth CSV](FINAL_MULTILENGTH.csv)
+- [Final LaTeX table](FINAL_TABLE.tex)
+- [Girth-only timings (CSV)](FINAL_TABLE.csv)
+- [Multiple-length timings (CSV)](FINAL_MULTILENGTH.csv)
+- [Complete results and methods](FINAL_TABLE.md)
 
-## Benchmarks
+## Scope
 
-- **17 girth-only** cases (`T=g`): KB, IMPA, Exact and Hybrid.
-- **5 near-girth** cases (`g=6,T=8`): KB, IMPA and Exact. All are low-degree `(3,4)` or `(3,6)` cyclic lifts of affine-incidence bases, with `N_6>=4608` and `N_8>=26624`. There are **no (3,3)** cases.
-- Counts are checked using independently implemented canonical simple-cycle DFS for the near-girth experiments.
-- These cycle-rich near-girth examples show that IMPA and KB can both beat Exact. They are included as a balanced empirical comparison, not to demonstrate a predetermined ranking.
+**Girth-only:** 17 benchmark Tanner graphs; KB, IMPA, Exact and Hybrid.
 
-## Reproduction
+**Multiple lengths:** the preselected graphs for which Exact was fastest in an earlier `T=g` table, evaluated at `T=g+2` and, where feasible, `T=g+4`. The fixed cohort includes A16c, A128c, A128r, B128c, C128r, R1200, R2400, P1200, P1600 and Q410. Earlier measured rankings for borderline graphs can change slightly across runs. In particular, this is *not* a claim that Exact is the fastest at the longer lengths.
 
-Source files: `four_algorithms.cpp` (girth-only), `multilength.cpp` (near-girth), `generate_graphs.py`, `rich_multilength.py`, and `run_remaining.py`.
+## Implementation and reproduction
 
-In **Actions → Final benchmarks (cycle-rich low-degree) → Run workflow**, the workflow builds all sources with C++17 `-O3 -DNDEBUG`, pins execution to one logical CPU, executes the full comparison, independently verifies counts, and updates the CSV/Markdown/LaTeX together. Timings exclude file loading and graph construction. Deterministic runtimes are medians of seven executions. Hybrid runtimes are sample means.
+The algorithm implementations are unchanged:
 
-The external graph corpus is used for the four R/P **input edge lists only**, never for old source code or old timing results. The cycle-rich graph inputs are regenerated directly in `rich_multilength.py`.
+- `four_algorithms.cpp`: KB, IMPA, Exact and Hybrid for girth-only counting.
+- `multilength.cpp`: KB, IMPA and BFS/residual-search Exact for all even cycle lengths up to `T`; verifies every reported count against independent canonical simple-cycle DFS.
+- `generate_graphs.py`: deterministic graph construction.
+- `run_remaining.py`: baseline 17-graph benchmark on a pinned CPU.
+- `exact_winners_multilength.py`: fixed selected graph comparisons at `g+2` and `g+4`, using the same compiled algorithms.
+- `.github/workflows/final-benchmarks.yml`: compiles and reruns all comparisons in GitHub Actions.
 
-The complete results and SHA-256 graph hashes are in the final CSV files.
+Compiler: `g++ -std=c++17 -O3 -DNDEBUG`, single thread. Deterministic runtimes are medians of 7 executions. Graph loading and construction are untimed. For unusually expensive independent checks a per-test 80-second limit applies; unfinished rows are explicitly omitted rather than assigned invented times.
+
+Four R/P graph *input files* are retrieved from the separate reference graph corpus. No old algorithm implementations or old timing results are imported.
