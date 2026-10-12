@@ -64,6 +64,19 @@ ull kb(const G&gr,int g){
     int w=gr.to[e];if(!touched[w]){touched[w]=1;nodes.push_back(w);}
     for(int j=0;j<D;j++)sums[(size_t)w*D+j]+=cur[(size_t)e*D+j];
    }
+   // At the final length only messages returning to the root are queried.
+   // Evaluate exactly those KB messages from the node sums, without
+   // propagating a layer of messages that will never be used.
+   if(length+1==g){
+    for(int j=0;j<(int)gr.out[root].size();j++){
+     int e=gr.out[root][j], w=gr.to[e];
+     for(int h=0;h<D;h++)if(h!=j)
+      result+=sums[(size_t)w*D+h]-cur[(size_t)e*D+h];
+    }
+    for(int e:active)for(int j=0;j<D;j++)cur[(size_t)e*D+j]=0;
+    for(int u:nodes){touched[u]=0;for(int j=0;j<D;j++)sums[(size_t)u*D+j]=0;}
+    break;
+   }
    an.clear();for(int u:nodes){
     if(u!=root)for(int e:gr.out[u]){
      int w=gr.to[e];if(w<gr.n&&w<root)continue;
@@ -71,12 +84,6 @@ ull kb(const G&gr,int g){
       ull z=sums[(size_t)u*D+j]-cur[(size_t)(e^1)*D+j];
       nxt[(size_t)e*D+j]=z;nonzero|=(z!=0);
      }if(nonzero)an.push_back(e);
-    }
-   }
-   if(length+1==g){
-    for(int j=0;j<(int)gr.out[root].size();j++){
-     int e=gr.out[root][j]^1;
-     for(int h=0;h<D;h++)if(h!=j)result+=nxt[(size_t)e*D+h];
     }
    }
    for(int e:active)for(int j=0;j<D;j++)cur[(size_t)e*D+j]=0;
