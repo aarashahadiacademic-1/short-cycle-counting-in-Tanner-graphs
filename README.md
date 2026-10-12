@@ -9,7 +9,7 @@ Reproducible exact and hybrid cycle-counting benchmarks for LDPC Tanner graphs.
 
 ## Scope
 
-**Girth-only:** 17 benchmark Tanner graphs; KB, IMPA, Exact and Hybrid. For each graph all four run **100 times**, in independently randomized algorithm order each block. Final reported timings are **arithmetic means**; sample standard deviations and medians are recorded in `FINAL_TABLE.csv`.
+**Girth-only:** 17 benchmark Tanner graphs; KB, IMPA, Exact and Hybrid. For each graph all four run **100 times**, in independently randomized algorithm order each block. Final reported timings are **arithmetic means**; sample standard deviations are recorded in `FINAL_TABLE.csv`.
 
 **Multiple lengths:** the preselected graphs for which Exact was fastest in an earlier `T=g` table, evaluated at `T=g+2` and, where feasible, `T=g+4`. The fixed cohort includes A16c, A128c, A128r, B128c, C128r, R1200, R2400, P1200, P1600 and Q410. Earlier measured rankings for borderline graphs can change slightly across runs. In particular, this is *not* a claim that Exact is the fastest at the longer lengths.
 
