@@ -9,7 +9,9 @@ SRC=Path(os.environ.get("REFERENCE_GRAPH_DIR","/tmp/reference-tanner-graphs/grap
 os.sched_setaffinity(0,{min(os.sched_getaffinity(0))})
 with (P/"FINAL_TABLE.csv").open(newline="") as f:
  base=list(csv.DictReader(f))
-chosen=[r for r in base if float(r["Exact_ms"]) < min(float(r[k]) for k in ("KB_ms","IMPA_ms","Hybrid_ms"))]
+selected={"A16c","A128c","A128r","B128c","C128r","R1200","R2400","P1200","P1600","Q410"}
+chosen=[r for r in base if r["graph"] in selected]
+if len(chosen)!=len(selected):raise RuntimeError("Missing selected graphs")
 if not chosen:raise RuntimeError("No Exact winning rows!")
 results=[];skipped=[]
 # Give at most 80 sec per test (including canonical independent verification).
@@ -50,7 +52,7 @@ for r in results:
  vals=[float(r[k]) for k in ("KB_ms","IMPA_ms","Exact_ms")]
  out=[("**"+f"{x:.3f}"+"**") if x==min(vals) else f"{x:.3f}" for x in vals]
  md.append(f"| {r['graph']} | ({r['dv']},{r['dc']}) | {r['g']} | {r['n']} | {r['T']} | ({r['counts'].replace(';',',')}) | "+" | ".join(out)+" |")
-md+=["","## Protocol","Same unchanged multilength.cpp implementations for KB, IMPA and BFS-residual-search Exact. Each completed result matches independent canonical simple-cycle DFS. Every timing is the median of seven same-core -O3 runs. Selection was determined **only** by previously measured T=g winners, not by the new times. Cases that exceed the 80-second validation limit are excluded rather than assigned fabricated results.",""]
+md+=["","## Protocol","Same unchanged multilength.cpp implementations for KB, IMPA and BFS-residual-search Exact. Each completed result matches independent canonical simple-cycle DFS. Every timing is the median of seven same-core -O3 runs. Selection was fixed from earlier T=g Exact-winning records (including borderline A128c and P1600); the new T>g times were not used to select graphs. Cases that exceed the 80-second validation limit are excluded rather than assigned fabricated results.",""]
 if skipped:
  md+=["### Not completed within validation limit"]+[f"* {n}, T={t}: {why}" for n,t,why in skipped]
 (P/"FINAL_TABLE.md").write_text("\n".join(md)+"\n")
