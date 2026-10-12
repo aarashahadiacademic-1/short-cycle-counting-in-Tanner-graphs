@@ -32,7 +32,6 @@ for old in previous:
  updated["hybrid_reps"]=100;updated["sha256"]=h
  for method in ("KB","IMPA","Exact","Hybrid"):
   updated[method+"_std_ms"]=x[method+"_std_ms"]
-  updated[method+"_median_ms"]=x[method+"_median_ms"]
  updated["deterministic_reps"]=100
  updated["random_wins"]=x["random_wins"]
  results.append(updated)
@@ -94,13 +93,13 @@ lines+=["","## Multiple cycle lengths (existing verified results: medians of sev
 "|---|---:|---:|---|---:|---:|---:|"]
 for x in multi:
  v=[float(x[m+"_ms"]) for m in ("KB","IMPA","Exact")]
- cells=[("**"+fmt(x[m+"_ms"])+"**") if y==min(v) else fmt(x[m+"_ms"]) for y in v]
+ cells=[("**"+fmt(y)+"**") if y==min(v) else fmt(y) for y in v]
  lines.append(f"| {x['graph']} | {x['g']} | {x['T']} | ({x['counts'].replace(';',',')}) | "+" | ".join(cells)+" |")
 lines+=["","## Reproducibility and interpretation","",
 f"* CPU: {next((s.split(':',1)[1].strip() for s in Path('/proc/cpuinfo').read_text().splitlines() if s.lower().startswith('model name')),'unknown')}; pinned logical CPU {cpu}.",
 "* C++17 -O3 -DNDEBUG, one CPU, 100 randomized-order paired blocks for all four algorithms.",
 "* All 1700 KB / IMPA / Exact counts match the reference per algorithm; 100 Hybrid estimates per graph with r=100.",
-"* Timing values in the upper half are arithmetic means, not medians. Standard deviations and medians are in FINAL_TABLE.csv.",
+"* Timing values in the upper half are arithmetic means, not medians. Standard deviations are in FINAL_TABLE.csv.",
 "* Lower half retains earlier verified 7-run medians; it was NOT remeasured under the 100-run protocol.",
 "* Input graph SHA-256 checks and a fixed set of 17 graphs prevent silent benchmark changes.",
 "* The benchmark uses exactly the current four_algorithms.cpp, included in benchmark_100.cpp.",
