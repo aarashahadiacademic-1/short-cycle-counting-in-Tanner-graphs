@@ -1,4 +1,4 @@
-name: Final benchmarks (optimized KB, fixed cohort)
+name: Final benchmarks (100-run means)
 on:
   workflow_dispatch:
   push:
@@ -20,8 +20,7 @@ jobs:
           git clone --quiet --depth=1 https://github.com/aarashahadiacademic-1/tanner-cycle-counting.git /tmp/reference-tanner-graphs
       - name: Execute all benchmarks with CPU affinity and check every count
         run: |
-          python3 run_remaining.py
-          python3 exact_winners_multilength.py
+          python3 run_100.py
       - name: Commit checked final table only
         run: |
           git config user.name "github-actions[bot]"
@@ -29,5 +28,5 @@ jobs:
           git pull --ff-only origin main
           git add FINAL_TABLE.csv FINAL_MULTILENGTH.csv FINAL_TABLE.md FINAL_TABLE.tex
           git diff --cached --quiet && exit 0
-          git commit -m "Final checked Exact-winner multilength tables [skip ci]"
+          git commit -m "Final verified 100-run arithmetic-mean timings [skip ci]"
           git push
